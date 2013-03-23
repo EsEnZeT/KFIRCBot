@@ -20,7 +20,7 @@ I take credits only for stuff listed below.
  * IRC command parsing (now accepting capital/lowercase)
 
 ### Added:
- * ability to send message through bot to active game (shown as DAR character :)
+ * ability to send messages through bot to active game (shown as DAR character :)
  * ability to join channel protected with password
  * ability to hide players IPs (shown during player connects to the server)
  * nick to message showing when player exits the server
