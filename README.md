@@ -28,7 +28,7 @@ I take credits only for stuff listed below.
 
 ### Changed:
  * command `!scores` to `!status`
- * ability to parse `!status` from in-game chat
+ * ability to parse `!status` from in-game chat (disabled)
  * a bit the look of messages showing from bot (etc. waves)
 
 
