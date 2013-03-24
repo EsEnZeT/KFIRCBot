@@ -4,37 +4,27 @@ var IRCLink irc;
 var IRCSpec Spect;
 var IRCPlayerJoin pjoin;
 var string mapName;
-var bool ircConnected;
-var bool needReconnection;
-var bool needRejoin;
+var bool ircConnected, needReconnection, needRejoin;
 
-var config string ircServer;
-var config int ircPort;
-var config string ircNick;
-var config string ircChannel;
-var config string ircPassword;
-var config int Color1;
-var config int Color2;
+var config string ircServer, ircNick, ircChannel, ircPassword, botChar;
+var config int ircPort, Color1, Color2;
 var config bool hideIP;
-const VERSION = "102";
+const VERSION = "103";
 
 
-Function Timer()
-{
-	if (needReconnection)
-	{
+Function Timer() {
+	if (needReconnection) {
 		ircMakeConnection();
 		needReconnection = False;
 	}
 
-	If (needRejoin) {
+	if (needRejoin) {
 		IRC.ircJoinChannel();
 		needRejoin = False;
 	}
 }
 
-function ircSend(String msg)
-{
+function ircSend(String msg) {
 	irc.ircSend(msg);
 }
 

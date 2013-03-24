@@ -20,7 +20,7 @@ I take credits only for stuff listed below.
  * IRC command parsing (now accepting capital/lowercase)
 
 ### Added:
- * ability to send messages through bot to active game (shown as DAR character :)
+ * ability to send messages through bot to active game (shown as specified custom character)
  * ability to join channel protected with password
  * ability to hide players IPs (shown during player connects to the server)
  * nick to message showing when player exits the server
@@ -41,14 +41,15 @@ I take credits only for stuff listed below.
 
 ```
 [KFIRCBot.KFIRC]
-ircServer= (ex: irc.freenode.net)
-ircPort= (ex: 6667)
-ircNick= (ex: KFIRCBot)
-ircChannel= (ex: #yourchannel)
+ircServer= (ex.: irc.freenode.net)
+ircPort= (ex.: 6667)
+ircNick= (ex.: KFIRCBot)
+ircChannel= (ex.: #yourchannel)
 ircPassword= (password to channel, if any)
+botChar= (ex.: DAR, check your *.upl files for names)
 hideIP= (0 - show client IP on join; 1 - don't)
-color1= (ex: 04)
-color2= (ex: 12)
+color1= (ex.: 04)
+color2= (ex.: 12)
 ```
 
 Properly installed mutator should show in the server console something like this:
@@ -82,3 +83,4 @@ Resolved irc.freenode.net (130.239.18.172)
 Released under the GPL license (http://www.gnu.org/copyleft/gpl.html).
 
 ![githalytics.com alpha](https://cruel-carlota.pagodabox.com/48687fd4a86adc1568a4d7453bf85698 "githalytics.com")
+
