@@ -80,3 +80,5 @@ Resolved irc.freenode.net (130.239.18.172)
 
 ## License
 Released under the GPL license (http://www.gnu.org/copyleft/gpl.html).
+
+![githalytics.com alpha](https://cruel-carlota.pagodabox.com/48687fd4a86adc1568a4d7453bf85698 "githalytics.com")
