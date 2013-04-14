@@ -1,4 +1,4 @@
-class IRCPlayerJoin extends info;
+Class IRCPlayerJoin extends Info;
 
 struct PlayerCache {
 	var string name, ip;
@@ -10,18 +10,18 @@ var array<PlayerCache> cache;
 var int lastID;
 
 
-function ircSend(String msg) {
-	KFIRC(Owner).irc.ircSend(msg);
-}
-
-function string coloring(int cor) {
-	return chr(3) $ cor;
-}
-
 function PreBeginPlay() {
 	Disable('Tick');
 	setTimer(1, True);
 	lastID = -1;
+}
+
+function ircSend(string msg) {
+	KFIRC(Owner).irc.ircSend(msg);
+}
+
+function string col(int cor) {
+	return chr(3) $ cor;
 }
 
 function Tick(float DeltaTime) {
@@ -48,7 +48,7 @@ function CheckPlayerList() {
 	for (C = Level.ControllerList; C != None; C = C.NextController) {
 		PC = PlayerController(C);
 
-		if (PC == none) {
+		if (PC == None) {
 			continue;
 		}
 		
@@ -69,13 +69,13 @@ function CheckPlayerList() {
 				cache[pLoc].spec = PC.PlayerReplicationInfo.bOnlySpectator;
 				cache[pLoc].ip = ipstr;
 				cache[pLoc].name = PC.PlayerReplicationInfo.PlayerName;
-				ircSend(coloring(KFIRC(Owner).Default.Color1) $ "Player joins:" @ coloring(KFIRC(Owner).Default.Color2) $ PC.PlayerReplicationInfo.PlayerName @ coloring(KFIRC(Owner).Default.Color1) $ "IP:" @ coloring(KFIRC(Owner).Default.Color2) $ pip);
+				ircSend(col(KFIRC(Owner).Default.Color1) $ "Player joins:" @ col(KFIRC(Owner).Default.Color2) $ PC.PlayerReplicationInfo.PlayerName @ col(KFIRC(Owner).Default.Color1) $ "IP:" @ col(KFIRC(Owner).Default.Color2) $ pip);
 			}
 			else if (cache[pLoc].name != PC.PlayerReplicationInfo.PlayerName) {
 				if (ts == "") {
 					ts = Timestamp();
 				}
-				ircSend(coloring(KFIRC(Owner).Default.Color1) $ "Player joins:" @ coloring(KFIRC(Owner).Default.Color2) $ PC.PlayerReplicationInfo.PlayerName @ coloring(KFIRC(Owner).Default.Color1) $ "IP:" @ coloring(KFIRC(Owner).Default.Color2) $ pip);
+				ircSend(col(KFIRC(Owner).Default.Color1) $ "Player joins:" @ col(KFIRC(Owner).Default.Color2) $ PC.PlayerReplicationInfo.PlayerName @ col(KFIRC(Owner).Default.Color1) $ "IP:" @ col(KFIRC(Owner).Default.Color2) $ pip);
 				cache[pLoc].name = PC.PlayerReplicationInfo.PlayerName;
 			}
 			cache[pLoc].magic = magicint;
@@ -89,29 +89,11 @@ function CheckPlayerList() {
 				ts = Timestamp();
 			}
 			cache[pLoc].magic = -1;
-			ircSend(coloring(KFIRC(Owner).Default.Color1) $ "Player left:" @ coloring(KFIRC(Owner).Default.Color2) $ cache[pLoc].name);
+			ircSend(col(KFIRC(Owner).Default.Color1) $ "Player left:" @ col(KFIRC(Owner).Default.Color2) $ cache[pLoc].name);
 		}
 	}
 }
 
-
-function string GetServerPort() {
-	local string S;
-	local int i;
-	S = Level.GetAddressURL();
-	i = InStr(S, ":");
-	return Mid(S,i+1);
-}
-
-function string GetServerIP() {
-	local string S;
-	local int i;
-	S = Level.GetAddressURL();
-	i = InStr(S, ":");
-	return Left(S,i);
-}
-
-/** put out a time stamp */
 function string Timestamp() {
 	return Level.Year$"/"$Level.Month$"/"$Level.Day$" "$Level.Hour$":"$Level.Minute$":"$Level.Second;
 }

@@ -1,16 +1,23 @@
-class KFIRC extends Actor Config;
+Class KFIRC extends Actor Config;
 
 var IRCLink irc;
-var IRCSpec Spect;
+var IRCSpec spec;
 var IRCPlayerJoin pjoin;
-var string mapName;
+var IRCBroadcastHandler bhand;
 var bool ircConnected, needReconnection, needRejoin;
-
 var config string ircServer, ircNick, ircChannel, ircPassword, botChar;
-var config int ircPort, Color1, Color2;
+var config int ircPort, Color1, Color2, Color3;
 var config bool hideIP;
-const VERSION = "103";
+const VERSION = "104";
 
+
+function postBeginPlay() {
+	Super.postBeginPlay();
+	log("[+] Starting KFIRCBot version:" @ VERSION);
+	log("[+] SnZ - snz@spinacz.org");
+	log("[+] Fox - http://www.epnteam.net/");
+	ircMakeConnection();
+}
 
 Function Timer() {
 	if (needReconnection) {
@@ -19,28 +26,19 @@ Function Timer() {
 	}
 
 	if (needRejoin) {
-		IRC.ircJoinChannel();
+		irc.ircJoinChannel();
 		needRejoin = False;
 	}
 }
 
-function ircSend(String msg) {
-	irc.ircSend(msg);
-}
-
-function postBeginPlay() {
-	super.postBeginPlay();
-	log("[+] Starting KFIRCBot version:" @ VERSION);
-	log("[+] Fox - http://www.epnteam.net/");
-	log("[+] SnZ - snz@spinacz.org");
-	ircMakeConnection();
-}
-
 function ircMakeConnection() {
-	Spect = Spawn(Class'IRCSpec');
-	Spect.SetOwner(Self);
-	Spect.SetTimer(1.00, True);
+	spec = Spawn(Class'IRCSpec');
+	spec.SetOwner(Self);
+	spec.SetTimer(1.00, True);
 
+	bhand = Spawn(Class'IRCBroadcastHandler');
+	bhand.SetOwner(Self);
+	
 	irc = Spawn(Class'IRCLink');
 	irc.SetOwner(Self);
 	

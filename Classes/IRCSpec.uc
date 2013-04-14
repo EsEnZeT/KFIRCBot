@@ -1,4 +1,4 @@
-class IRCSpec extends MessagingSpectator;
+Class IRCSpec extends MessagingSpectator;
 
 var string perkinfo[64];
 var PlayerReplicationInfo PRI;
@@ -7,28 +7,34 @@ var int waveTime;
 
 
 function InitPlayerReplicationInfo() {
+	Super.InitPlayerReplicationInfo();
 	PlayerReplicationInfo.PlayerName = "IRCBot";
 	PlayerReplicationInfo.CharacterName = class'KFIRC'.Default.botChar;
-	PlayerReplicationInfo.bOnlySpectator = True;
+	PlayerReplicationInfo.bAdmin = True; // hide from kick list
+}
+
+function postBeginPlay() {
+	Super.postBeginPlay();
+	WaveTime = 0;
+	startingGameAnnounced = False;
+	endWaveAnnounced = True;
+	lastWave = False;
+}
+
+function ircSend(string msg) {
+	KFIRC(Owner).irc.ircSend(msg);
+}
+
+function string col(int cor) {
+	return chr(3) $ cor;
+}
+
+function MsgSend(string bmsg) {
+	Level.Game.Broadcast(Self, bmsg, 'Say');
 }
 
 function string gMapName() {
-	local int i, j;
-	local string MapName;
-	MapName = Level.GetLocalURL();
-	i = InStr(MapName, "/") + 1;
-	if (i < 0 || i > 16){
-		i = 0;
-	}
-	j = InStr(MapName, "?");
-	if (j < 0){
-		j = Len(MapName);
-	}
-	if (Mid(MapName, j - 3, 3) ~= "rom"){
-		j -= 4;
-	}
-	MapName = Mid(MapName, i, j - i);
-	return MapName;
+	return Left(Level, InStr(Level, "."));
 }
 
 function string getPerkName(string S) {
@@ -58,7 +64,7 @@ function string getPerkName(string S) {
 			return "None";
 			break;
 		Default:
-			return Mid(S,11);
+			return Mid(S, 11);
 			break;
 	}
 }
@@ -67,19 +73,12 @@ function string getPerkInfo(int pid) {
 	local int i;
 	local KFPlayerReplicationInfo KFPRI;
 	i = 0;
+
 	ForEach DynamicActors(Class'KFPlayerReplicationInfo', KFPRI) {
-		perkinfo[i] = coloring(KFIRC(Owner).Default.Color2) $ getPerkName(string(KFPRI.ClientVeteranSkill)) @ coloring(KFIRC(Owner).Default.Color1) $ "Level:" @ coloring(KFIRC(Owner).Default.Color2) $ KFPRI.ClientVeteranSkillLevel;
+		perkinfo[i] = col(KFIRC(Owner).Default.Color2) $ getPerkName(string(KFPRI.ClientVeteranSkill)) @ col(KFIRC(Owner).Default.Color1) $ "Level:" @ col(KFIRC(Owner).Default.Color2) $ KFPRI.ClientVeteranSkillLevel;
 		i++;
 	}
 	return perkinfo[pid];
-}
-
-function postBeginPlay() {
-	Super.postBeginPlay();
-	WaveTime = 0;
-	startingGameAnnounced = False;
-	endWaveAnnounced = True;
-	lastWave = False;
 }
 
 function string getGameLength() {
@@ -108,33 +107,27 @@ function string getGameDifficulty() {
 		return "Hard";
 	else if (KFGameType(Level.Game).GameDifficulty >= 2.0)
 		return "Normal";
-	else if (KFGameType(Level.Game).GameDifficulty >= 1.0)
+	else if (KFGameType(Level.Game).GameDifficulty == 1.0)
 		return "Beginner";
-}
-
-function string coloring(int cor) {
-	return chr(3) $ cor;
-}
-
-function ircSend(String msg)
-{
-	KFIRC(Owner).irc.ircSend(msg);
 }
 
 function string Duration(int dtime) {
 	local int hrs, mins, secs;
 	local string r;
+
 	if (dtime >= 3600) {
 		hrs = dtime / 60 / 60;
 		mins = dtime / 60 % 60;
 		secs = dtime % 60;
 		r = hrs $ "hr(s)" @ mins $ "min(s)" @ secs $ "sec(s)";
 	}
+
 	if (dtime >= 60) {
 		mins = dtime / 60 % 60;
 		secs = dtime % 60;
 		r = mins $ "min(s)" @ secs $ "sec(s)";
 	}
+
 	if (dtime < 60) {
 		r = dtime $ "sec(s)";
 	}
@@ -142,10 +135,10 @@ function string Duration(int dtime) {
 }
 
 function Timer() {
-	Super.timer();
+	Super.Timer();
 	if (KFGameType(Level.Game).bWaveInProgress == True && startingGameAnnounced == False) {
-		ircSend(coloring(KFIRC(Owner).Default.Color1) $ "Starting Game!");
-		ircSend(coloring(KFIRC(Owner).Default.Color1) $ "Map:" @ coloring(KFIRC(Owner).Default.Color2) $ gMapName() @ coloring(KFIRC(Owner).Default.Color1) $ "Game Length:" @ coloring(KFIRC(Owner).Default.Color2) $ getGameLength() $ "(" $ KFGameType(Level.Game).FinalWave $ ")" @ coloring(KFIRC(Owner).Default.Color1) $ "Difficulty:" @ coloring(KFIRC(Owner).Default.Color2) $ getGameDifficulty() @ coloring(KFIRC(Owner).Default.Color1) $ "Elapsed:" @ coloring(KFIRC(Owner).Default.Color2) $ Duration(KFGameType(Level.Game).ElapsedTime));
+		ircSend(col(KFIRC(Owner).Default.Color1) $ "Starting Game!");
+		ircSend(col(KFIRC(Owner).Default.Color1) $ "Map:" @ col(KFIRC(Owner).Default.Color2) $ gMapName() @ col(KFIRC(Owner).Default.Color1) $ "Game Length:" @ col(KFIRC(Owner).Default.Color2) $ getGameLength() $ "(" $ KFGameType(Level.Game).FinalWave $ ")" @ col(KFIRC(Owner).Default.Color1) $ "Difficulty:" @ col(KFIRC(Owner).Default.Color2) $ getGameDifficulty() @ col(KFIRC(Owner).Default.Color1) $ "Elapsed:" @ col(KFIRC(Owner).Default.Color2) $ Duration(KFGameType(Level.Game).ElapsedTime));
 		startingGameAnnounced = True;
 	}
 
@@ -154,15 +147,15 @@ function Timer() {
 	}
 
 	if (KFGameType(Level.Game).bWaveInProgress == False && KFGameType(Level.Game).bWaveBossInProgress == False && KFGameType(Level.Game).WaveNum > 0 && endWaveAnnounced == False && lastWave == True) {
-		ircSend(coloring(KFIRC(Owner).Default.Color1) $ "FINAL Wave:" @ coloring(KFIRC(Owner).Default.Color2) $ KFGameType(Level.Game).WaveNum @ coloring(KFIRC(Owner).Default.Color1) $ "ended. Wave Time:" @ coloring(KFIRC(Owner).Default.Color2) $ Duration(waveTime));
+		ircSend(col(KFIRC(Owner).Default.Color1) $ "FINAL Wave:" @ col(KFIRC(Owner).Default.Color2) $ KFGameType(Level.Game).WaveNum @ col(KFIRC(Owner).Default.Color1) $ "ended. Wave Time:" @ col(KFIRC(Owner).Default.Color2) $ Duration(waveTime));
 		ircSend(" ");
 		SStatus();
-		ircSend(coloring(KFIRC(Owner).Default.Color1) $ "Total game time:" @ coloring(KFIRC(Owner).Default.Color2) $ Duration(KFGameType(Level.Game).ElapsedTime));
+		ircSend(col(KFIRC(Owner).Default.Color1) $ "Total game time:" @ col(KFIRC(Owner).Default.Color2) $ Duration(KFGameType(Level.Game).ElapsedTime));
 		endWaveAnnounced = True;
 	}
 
 	if (KFGameType(Level.Game).bWaveInProgress == False && KFGameType(Level.Game).bWaveBossInProgress == False && KFGameType(Level.Game).WaveNum > 0 && endWaveAnnounced == False && lastWave == False) {
-		ircSend(coloring(KFIRC(Owner).Default.Color1) $ "Wave:" @ coloring(KFIRC(Owner).Default.Color2) $ KFGameType(Level.Game).WaveNum $ coloring(KFIRC(Owner).Default.Color1) $ "/" $ coloring(KFIRC(Owner).Default.Color2) $ KFGameType(Level.Game).FinalWave @ coloring(KFIRC(Owner).Default.Color1) $ "ended. Wave Time:" @ coloring(KFIRC(Owner).Default.Color2) $ Duration(waveTime));
+		ircSend(col(KFIRC(Owner).Default.Color1) $ "Wave:" @ col(KFIRC(Owner).Default.Color2) $ KFGameType(Level.Game).WaveNum $ col(KFIRC(Owner).Default.Color1) $ "/" $ col(KFIRC(Owner).Default.Color2) $ KFGameType(Level.Game).FinalWave @ col(KFIRC(Owner).Default.Color1) $ "ended. Wave Time:" @ col(KFIRC(Owner).Default.Color2) $ Duration(waveTime));
 		ircSend(" ");
 		SStatus();
 		endWaveAnnounced = True;
@@ -170,31 +163,15 @@ function Timer() {
 	}
 	
 	if (KFGameType(Level.Game).bWaveInProgress == True && KFGameType(Level.Game).bWaveBossInProgress == False && KFGameType(Level.Game).WaveNum < KFGameType(Level.Game).FinalWave && KFGameType(Level.Game).WaveNum >= 0 && endWaveAnnounced == True) {
-		ircSend(coloring(KFIRC(Owner).Default.Color1) $ "Wave:" @ coloring(KFIRC(Owner).Default.Color2) $ KFGameType(Level.Game).WaveNum + 1 $ coloring(KFIRC(Owner).Default.Color1) $ "/" $ coloring(KFIRC(Owner).Default.Color2) $ KFGameType(Level.Game).FinalWave @ coloring(KFIRC(Owner).Default.Color1) $ "starting." @ coloring(KFIRC(Owner).Default.Color1) $ "Total Specimens:" @ coloring(KFIRC(Owner).Default.Color2) $ KFGameType(Level.Game).TotalMaxMonsters);
+		ircSend(col(KFIRC(Owner).Default.Color1) $ "Wave:" @ col(KFIRC(Owner).Default.Color2) $ KFGameType(Level.Game).WaveNum + 1 $ col(KFIRC(Owner).Default.Color1) $ "/" $ col(KFIRC(Owner).Default.Color2) $ KFGameType(Level.Game).FinalWave @ col(KFIRC(Owner).Default.Color1) $ "starting." @ col(KFIRC(Owner).Default.Color1) $ "Total Specimens:" @ col(KFIRC(Owner).Default.Color2) $ KFGameType(Level.Game).TotalMaxMonsters);
 		endWaveAnnounced = False;
 	}
 
 	if (KFGameType(Level.Game).bWaveBossInProgress == True && KFGameType(Level.Game).WaveNum >= KFGameType(Level.Game).FinalWave && KFGameType(Level.Game).WaveNum >= 0 && endWaveAnnounced == True){
-		ircSend(coloring(KFIRC(Owner).Default.Color1) $ "FINAL Wave:" @ coloring(KFIRC(Owner).Default.Color2) $ "PATRIARCH!!!" @ coloring(KFIRC(Owner).Default.Color1) $ "starting.");
+		ircSend(col(KFIRC(Owner).Default.Color1) $ "FINAL Wave:" @ col(KFIRC(Owner).Default.Color2) $ "PATRIARCH!!!" @ col(KFIRC(Owner).Default.Color1) $ "starting.");
 		lastWave = True;
 		endWaveAnnounced = False;
 	}
-}
-
-Event TeamMessage(PlayerReplicationInfo PRI, coerce string S, name Type ) {
-	if (Type == 'CriticalEvent') {
-		Return;
-	}
-	if (Type == 'DeathMessage') {
-		ircSend(coloring(KFIRC(Owner).Default.Color1) $ "Death:" @ coloring(KFIRC(Owner).Default.Color2) $ S);
-	}
-	if (Type == 'Say' || Type == 'TeamSay') {
-		ircSend("[C]" @ coloring(KFIRC(Owner).Default.Color1) $ PRI.PlayerName $ ":" @ coloring(KFIRC(Owner).Default.Color2) $ S);
-	}
-}
-
-function MsgSend(String bmsg) {
-	Level.Game.Broadcast(self, bmsg, 'Say');
 }
 
 function SStatus() {
@@ -205,12 +182,12 @@ function SStatus() {
 	} else {
 		ircSend("Current Status:");
 	}
-	ircSend(coloring(KFIRC(Owner).Default.Color1) $ "Map:" @ coloring(KFIRC(Owner).Default.Color2) $ gMapName() @ coloring(KFIRC(Owner).Default.Color1) $ "Game Length:" @ coloring(KFIRC(Owner).Default.Color2) $ getGameLength() $ "(" $ KFGameType(Level.Game).FinalWave $ ")" @ coloring(KFIRC(Owner).Default.Color1) $ "Difficulty:" @ coloring(KFIRC(Owner).Default.Color2) $ getGameDifficulty() @ coloring(KFIRC(Owner).Default.Color1) $ "Elapsed:" @ coloring(KFIRC(Owner).Default.Color2) $ Duration(KFGameType(Level.Game).ElapsedTime));
+	ircSend(col(KFIRC(Owner).Default.Color1) $ "Map:" @ col(KFIRC(Owner).Default.Color2) $ gMapName() @ col(KFIRC(Owner).Default.Color1) $ "Game Length:" @ col(KFIRC(Owner).Default.Color2) $ getGameLength() $ "(" $ KFGameType(Level.Game).FinalWave $ ")" @ col(KFIRC(Owner).Default.Color1) $ "Difficulty:" @ col(KFIRC(Owner).Default.Color2) $ getGameDifficulty() @ col(KFIRC(Owner).Default.Color1) $ "Elapsed:" @ col(KFIRC(Owner).Default.Color2) $ Duration(KFGameType(Level.Game).ElapsedTime));
 
 	i = 0;
 	ForEach DynamicActors(Class'PlayerReplicationInfo', PRI) {
 		if (!PRI.bOnlySpectator) {
-			ircSend(coloring(KFIRC(Owner).Default.Color1) $ "Player:" @ coloring(KFIRC(Owner).Default.Color2) $ PRI.PlayerName $ coloring(KFIRC(Owner).Default.Color1) $ "(" $ coloring(KFIRC(Owner).Default.Color2) $ getPerkInfo(i) $ coloring(KFIRC(Owner).Default.Color1) $ ")" @ coloring(KFIRC(Owner).Default.Color1) $ "Kills/Deaths:" @ coloring(KFIRC(Owner).Default.Color2) $ PRI.kills $ coloring(KFIRC(Owner).Default.Color1) $ "/" $ coloring(KFIRC(Owner).Default.Color2) $ int(PRI.deaths) @ coloring(KFIRC(Owner).Default.Color1) $ "Money:" @ coloring(KFIRC(Owner).Default.Color2) $ int(PRI.score) @ coloring(KFIRC(Owner).Default.Color1) $ "PING:" @ coloring(KFIRC(Owner).Default.Color2) $ PRI.Ping);
+			ircSend(col(KFIRC(Owner).Default.Color1) $ "Player:" @ col(KFIRC(Owner).Default.Color2) $ PRI.PlayerName $ col(KFIRC(Owner).Default.Color1) $ "(" $ col(KFIRC(Owner).Default.Color2) $ getPerkInfo(i) $ col(KFIRC(Owner).Default.Color1) $ ")" @ col(KFIRC(Owner).Default.Color1) $ "Kills/Deaths:" @ col(KFIRC(Owner).Default.Color2) $ PRI.kills $ col(KFIRC(Owner).Default.Color1) $ "/" $ col(KFIRC(Owner).Default.Color2) $ int(PRI.Deaths) @ col(KFIRC(Owner).Default.Color1) $ "Money:" @ col(KFIRC(Owner).Default.Color2) $ int(PRI.score) @ col(KFIRC(Owner).Default.Color1) $ "PING:" @ col(KFIRC(Owner).Default.Color2) $ PRI.Ping);
 		}
 		i++;
 	}

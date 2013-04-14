@@ -1,4 +1,4 @@
-class IRCLink extends TCPLink;
+Class IRCLink extends TCPLink;
 
 var int stats;
 
@@ -32,7 +32,7 @@ Event Resolved(IpAddr ipAddress) {
 
 function opened() {
 	stats = 0;
-	SetTimer(5,True);
+	SetTimer(3, True);
 	KFIRC(Owner).ircConnected = True;
 }
 
@@ -40,6 +40,7 @@ function Timer() {
 	if (Stats == 0) {
 		ircSendIRCInfo();
 	}
+
 	if (Stats == 1) {
 		ircJoinChannel();
 	}
@@ -52,8 +53,8 @@ function ircSend(string msg) {
 }
 
 Function ReceivedLine(string Line) {
-	local Array<String> Data;
-	local Int i;
+	local array<string> Data;
+	local int i;
 
 	Split(Line, Chr(10), Data);
 	if (Data.Length > 0) {
@@ -66,9 +67,8 @@ Function ReceivedLine(string Line) {
 }
 
 function ProcessLine(string msg) {
-	local Array<String> Data;
-	local string ircNick;
-	local string bmsg;
+	local array<string> Data;
+	local string bmsg, ircNick;
 	Split(msg, " ", Data);
 
 	if (InStr(msg, "PING") != -1) {
@@ -83,19 +83,19 @@ function ProcessLine(string msg) {
 		Split(Data[2], " ", Data);
 		
 		if (Data[0] ~= "!status") {
-			KFIRC(Owner).Spect.SStatus();
+			KFIRC(Owner).spec.SStatus();
 		}
 		
 		if (Data[0] ~= "!s") {
 			bmsg = Mid(msg, InStr(Locs(msg), ":!s") + 4);
-			KFIRC(Owner).Spect.MsgSend(bmsg);
+			KFIRC(Owner).spec.MsgSend(bmsg);
 		}
 	}
 	Split(msg, " ", Data);
 	
 	if (Data[1] ~= "KICK") {
 		KFIRC(Owner).needRejoin = True;
-		KFIRC(Owner).SetTimer(20, True);
+		KFIRC(Owner).SetTimer(15, True);
 	}
 	
 	if (Data[1] == "451") {
