@@ -4,11 +4,12 @@ var IRCLink irc;
 var IRCSpec spec;
 var IRCPlayerJoin pjoin;
 var IRCBroadcastHandler bhand;
+var IRCKillDetect kdct;
 var bool ircConnected, needReconnection, needRejoin;
 var config string ircServer, ircNick, ircChannel, ircPassword, botChar;
 var config int ircPort, Color1, Color2, Color3;
-var config bool hideIP;
-const VERSION = "104";
+var config bool hideIP, aO, aV, aAll, fLog;
+const VERSION = "105";
 
 
 function postBeginPlay() {
@@ -36,15 +37,18 @@ function ircMakeConnection() {
 	spec.SetOwner(Self);
 	spec.SetTimer(1.00, True);
 
-	bhand = Spawn(Class'IRCBroadcastHandler');
-	bhand.SetOwner(Self);
-	
 	irc = Spawn(Class'IRCLink');
 	irc.SetOwner(Self);
 	
 	pjoin = Spawn(Class'IRCPlayerJoin');
 	pjoin.SetOwner(Self);
 
+	bhand = Spawn(Class'IRCBroadcastHandler');
+	bhand.SetOwner(Self);
+
+	kdct = Spawn(Class'IRCKillDetect');
+	kdct.SetOwner(Self);
+	
 	irc.Resolve(Default.ircServer);
 }
 

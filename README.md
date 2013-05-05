@@ -14,7 +14,7 @@ I take credits only for stuff listed below.
 
 ## News
 ### Fixed:
- * bot rejoin and lowered time to 15s
+ * bot rejoin and lowered time to 10s
  * wave length naming
  * wave difficulty detection
  * IRC command parsing (now accepting capital/lowercase)
@@ -28,11 +28,23 @@ I take credits only for stuff listed below.
  * nick to message showing when player exits the server
  * elapsed time to `!status` command
  * prefixes for chat messages `>>` and death messages `*`
+ * permission handling (bot will respond now to certain users, with flag +o/+v/ALL)
+ * option to enable/disable logging of gameplay to irc channel
+ * detection of zed kill (bot will post to channel who killed boss on last wave, prefixed by `~!~`)
+ * `!help` command
 
 ### Changed:
  * command `!scores` to `!status`
  * ability to parse `!status` from in-game chat (disabled)
  * a bit the look of messages showing from bot (etc. waves, chat)
+
+
+## Checksum
+This is checksum for current release (v105) if doesn't match the file you have is unreliable!
+```
+ucc.exe Editor.CheckSumPackageCommandlet KFIRCBot.u
+KFIRCBot.u checksum: 0c6d4a085f2d008fee3812198d3983b7
+```
 
 
 ## Installation
@@ -54,11 +66,17 @@ hideIP= (0 - show client IP on join; 1 - don't)
 color1= (ex.: 04) (message types)
 color2= (ex.: 12) (messages)
 color3= (ex.: 09) (chat prefixes)
+aO= (1 - allow to execute !commands by OP(s)/+o flag; 0 - don't)
+aV= (1 - allow to execute !commands by VOICE(s)/+v flag; 0 - don't)
+aAll= (1 - allow all users to execute !commands; 0 - don't)
+fLog= (1 - log active gameplay events to channel on join; 0 - don't + not recommended)
 ```
+[You can find example configuration here].
+[You can find example configuration here]: https://raw.github.com/EsEnZeT/KFIRCBot/master/example.ini
 
 Properly installed mutator should show in the server console something like this:
 ```
-[+] Starting KFIRCBot version: 104
+[+] Starting KFIRCBot version: 105
 [+] SnZ - snz@spinacz.org
 [+] Fox - http://www.epnteam.net/
 Resolving irc.freenode.net...
@@ -70,6 +88,14 @@ Resolved irc.freenode.net (130.239.18.172)
 [`KFIRCBot`] is a fully automated mutator but you can also use following commands on channel:
 * `!status` - force show current game status
 * `!s <message>` - send message through bot to active game
+* `!log <1/0>` - ON/OFF logging active gameplay events to channel.
+* `!help` - will show all of the above commands, just in case if you forget
+
+Even if `fLog` will be defined as 0 you can still get output from any commands posted above.
+Only `!s <message>` won't care about `fLog` parameter (will send message to players and forcibly enable logging), because you want to get answers right?
+
+For example, if you used `fLog=0` bot will join channel and won't log current gameplay as long as you don't tell him to do this: `!log 1`.
+It can be usefull if you don't want too much spam, but if you want to use it without that, just specify `fLog=1` in config.
 [`KFIRCBot`]: https://raw.github.com/EsEnZeT/KFIRCBot/master/KFIRCBot.u
 
 
@@ -87,5 +113,4 @@ Resolved irc.freenode.net (130.239.18.172)
 Released under the GPL license (http://www.gnu.org/copyleft/gpl.html).
 
 ![githalytics.com alpha](https://cruel-carlota.pagodabox.com/48687fd4a86adc1568a4d7453bf85698 "githalytics.com")
-
 

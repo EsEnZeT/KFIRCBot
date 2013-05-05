@@ -83,7 +83,7 @@ function CheckPlayerList() {
 	}
 
 	// check parts
-	for (pLoc = 0; pLoc < cache.length; pLoc++) {
+	for (pLoc = 0; pLoc < cache.length; ++pLoc) {
 		if ((cache[pLoc].magic != magicint) && (cache[pLoc].magic > -1) && (cache[pLoc].ip != "")) {
 			if (ts == "") {
 				ts = Timestamp();
@@ -95,7 +95,7 @@ function CheckPlayerList() {
 }
 
 function string Timestamp() {
-	return Level.Year$"/"$Level.Month$"/"$Level.Day$" "$Level.Hour$":"$Level.Minute$":"$Level.Second;
+	return Level.Year $ "/" $ Level.Month $ "/" $ Level.Day @ Level.Hour $ ":" $ Level.Minute $ ":" $ Level.Second;
 }
 
 defaultproperties
