@@ -23,6 +23,7 @@ function Broadcast(Actor Sender, coerce string Msg, optional name Type) {
 	if (Type == 'DeathMessage') {
 		ircSend(col(KFIRC(Owner).Default.Color3) $ "*" @ col(KFIRC(Owner).Default.Color1) $ "Death:" @ col(KFIRC(Owner).Default.Color2) $ Msg);
 	}
+
 	Super.Broadcast(Sender, Msg, Type);
 }
 
@@ -32,7 +33,8 @@ function BroadcastTeam(Controller Sender, coerce string Msg, optional name Type)
 			ircSend(col(KFIRC(Owner).Default.Color3) $ ">>" @ col(KFIRC(Owner).Default.Color1) $ PlayerController(Sender).PlayerReplicationInfo.PlayerName $ ":" @ col(KFIRC(Owner).Default.Color2) $ Msg);
 		}
 	}
-	Super.BroadcastTeam(Sender, Msg, Type);
+	
+	Super.BroadcastTeam(Sender, Msg, Type);	
 }
 
 defaultproperties

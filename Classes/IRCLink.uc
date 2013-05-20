@@ -63,6 +63,10 @@ Function ReceivedLine(string Line) {
 	local array<string> Data;
 	local int i;
 
+	if (KFIRC(Owner).Default.bDebug) {
+		log(">KFIRCBOT< -" @ Line);
+	}
+
 	Split(Line, Chr(10), Data);
 	if (Data.Length > 0) {
 		For (i = 0; i < Data.Length; ++i) {
@@ -149,7 +153,7 @@ function ProcessLine(string msg) {
 	
 	if (Data[1] == "KICK") {
 		KFIRC(Owner).needRejoin = True;
-		KFIRC(Owner).SetTimer(10, False);
+		KFIRC(Owner).SetTimer(10, True);
 	}
 
 	if (stats == 2 && (Data[1] == "NICK" || Data[1] == "MODE")) {
@@ -161,6 +165,11 @@ function ProcessLine(string msg) {
 		Split(users[1], ":", users);
 		Split(users[1], " ", users);	
 	}	
+
+	if (Data[1] == "433") {
+		SendText("NICK" @ KFIRC(Owner).Default.ircNick $ "-" $ Rand(1000) $ Chr(10));
+		stats = 1;
+	}
 	
 	if (Data[1] == "451") {
 		stats = 0;
@@ -172,8 +181,6 @@ function ProcessLine(string msg) {
 	
 	if (Data[1] == "JOIN") {
 		stats = 2;
-		KFIRC(Owner).SetTimer(0, False);
-		SetTimer(0, False);
 	}
 }
 

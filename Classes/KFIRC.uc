@@ -8,8 +8,8 @@ var IRCKillDetect kdct;
 var bool ircConnected, needReconnection, needRejoin;
 var config string ircServer, ircNick, ircChannel, ircPassword, botChar;
 var config int ircPort, Color1, Color2, Color3;
-var config bool hideIP, aO, aV, aAll, fLog;
-const VERSION = "105";
+var config bool hideIP, aO, aV, aAll, fLog, bDebug;
+const VERSION = "106";
 
 
 function postBeginPlay() {

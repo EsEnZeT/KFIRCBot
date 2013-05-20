@@ -32,6 +32,8 @@ I take credits only for stuff listed below.
  * option to enable/disable logging of gameplay to irc channel
  * detection of zed kill (bot will post to channel who killed boss on last wave, prefixed by `~!~`)
  * `!help` command
+ * nick in use handling (will add -[0-1000] to current bot nick)
+ * `bDebug` which can help to diagnose problems on connection stage
 
 ### Changed:
  * command `!scores` to `!status`
@@ -40,10 +42,10 @@ I take credits only for stuff listed below.
 
 
 ## Checksum
-This is checksum for current release (v105) if doesn't match the file you have is unreliable!
+This is checksum for current release (v106) if doesn't match the file you have is unreliable!
 ```
 ucc.exe Editor.CheckSumPackageCommandlet KFIRCBot.u
-KFIRCBot.u checksum: 0c6d4a085f2d008fee3812198d3983b7
+KFIRCBot.u checksum: 1bb42a70db092a9a368acc6dffe1bc92
 ```
 
 
@@ -70,13 +72,14 @@ aO= (1 - allow to execute !commands by OP(s)/+o flag; 0 - don't)
 aV= (1 - allow to execute !commands by VOICE(s)/+v flag; 0 - don't)
 aAll= (1 - allow all users to execute !commands; 0 - don't)
 fLog= (1 - log active gameplay events to channel on join; 0 - don't + not recommended)
+bDebug= (1 - show messages in server console during connecting to irc server; 0 - don't)
 ```
 [You can find example configuration here].
 [You can find example configuration here]: https://raw.github.com/EsEnZeT/KFIRCBot/master/example.ini
 
 Properly installed mutator should show in the server console something like this:
 ```
-[+] Starting KFIRCBot version: 105
+[+] Starting KFIRCBot version: 106
 [+] SnZ - snz@spinacz.org
 [+] Fox - http://www.epnteam.net/
 Resolving irc.freenode.net...
@@ -113,4 +116,6 @@ It can be usefull if you don't want too much spam, but if you want to use it wit
 Released under the GPL license (http://www.gnu.org/copyleft/gpl.html).
 
 ![githalytics.com alpha](https://cruel-carlota.pagodabox.com/48687fd4a86adc1568a4d7453bf85698 "githalytics.com")
+
+
 
