@@ -2,6 +2,7 @@ Class IRCBroadcastHandler extends BroadcastHandler;
 
 
 function PostBeginPlay() {
+	NextBroadcastHandler = Level.Game.BroadcastHandler;
 	Level.Game.BroadcastHandler = Self;
 }
 

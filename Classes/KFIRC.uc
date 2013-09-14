@@ -2,14 +2,14 @@ Class KFIRC extends Actor Config;
 
 var IRCLink irc;
 var IRCSpec spec;
-var IRCPlayerJoin pjoin;
+var IRCVariousDetect vdct;
 var IRCBroadcastHandler bhand;
 var IRCKillDetect kdct;
 var bool ircConnected, needReconnection, needRejoin;
 var config string ircServer, ircNick, ircChannel, ircPassword, botChar;
 var config int ircPort, Color1, Color2, Color3;
-var config bool hideIP, aO, aV, aAll, fLog, bDebug;
-const VERSION = "106";
+var config bool hideIP, aO, aV, aAll, fLog, bDebug, rDemo;
+const VERSION = "107";
 
 
 function postBeginPlay() {
@@ -40,8 +40,8 @@ function ircMakeConnection() {
 	irc = Spawn(Class'IRCLink');
 	irc.SetOwner(Self);
 	
-	pjoin = Spawn(Class'IRCPlayerJoin');
-	pjoin.SetOwner(Self);
+	vdct = Spawn(Class'IRCVariousDetect');
+	vdct.SetOwner(Self);
 
 	bhand = Spawn(Class'IRCBroadcastHandler');
 	bhand.SetOwner(Self);
@@ -54,4 +54,20 @@ function ircMakeConnection() {
 
 defaultproperties
 {
+	ircServer="irc.freenode.net"
+	ircPort=6667
+	ircNick="KFIRCBot"
+	ircChannel="#KFIRCBot"
+	ircPassword=""
+	botChar="DAR"
+	hideIP=0
+	color1=04
+	color2=12
+	color3=09
+	aO=1
+	aV=1
+	aAll=1
+	fLog=1
+	bDebug=0
+	rDemo=0
 }

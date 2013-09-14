@@ -135,6 +135,7 @@ function string Duration(int dtime) {
 
 function Timer() {
 	Super.Timer();
+
 	if (KFGameType(Level.Game).bWaveInProgress == True && startingGameAnnounced == False) {
 		ircSend(col(KFIRC(Owner).Default.Color1) $ "Starting Game!");
 		ircSend(col(KFIRC(Owner).Default.Color1) $ "Map:" @ col(KFIRC(Owner).Default.Color2) $ gMapName() @ col(KFIRC(Owner).Default.Color1) $ "Game Length:" @ col(KFIRC(Owner).Default.Color2) $ getGameLength() $ "(" $ KFGameType(Level.Game).FinalWave $ ")" @ col(KFIRC(Owner).Default.Color1) $ "Difficulty:" @ col(KFIRC(Owner).Default.Color2) $ getGameDifficulty() @ col(KFIRC(Owner).Default.Color1) $ "Elapsed:" @ col(KFIRC(Owner).Default.Color2) $ Duration(KFGameType(Level.Game).ElapsedTime));
@@ -174,8 +175,8 @@ function Timer() {
 }
 
 function SStatus() {
-	local int i;
-	i = 0;
+	local Controller C;
+	local int health, armor;
 
 	if (startingGameAnnounced == False) {
 		ircSend("Game not in progress:");
@@ -184,11 +185,23 @@ function SStatus() {
 	}
 	ircSend(col(KFIRC(Owner).Default.Color1) $ "Map:" @ col(KFIRC(Owner).Default.Color2) $ gMapName() @ col(KFIRC(Owner).Default.Color1) $ "Game Length:" @ col(KFIRC(Owner).Default.Color2) $ getGameLength() $ "(" $ KFGameType(Level.Game).FinalWave $ ")" @ col(KFIRC(Owner).Default.Color1) $ "Difficulty:" @ col(KFIRC(Owner).Default.Color2) $ getGameDifficulty() @ col(KFIRC(Owner).Default.Color1) $ "Elapsed:" @ col(KFIRC(Owner).Default.Color2) $ Duration(KFGameType(Level.Game).ElapsedTime));
 
-	ForEach DynamicActors(Class'PlayerReplicationInfo', PRI) {
-		if (!PRI.bOnlySpectator) {
-			ircSend(col(KFIRC(Owner).Default.Color1) $ "Player:" @ col(KFIRC(Owner).Default.Color2) $ PRI.PlayerName @ col(KFIRC(Owner).Default.Color1) $ "(" $ col(KFIRC(Owner).Default.Color2) $ getPerkInfo(i) $ col(KFIRC(Owner).Default.Color1) $ ")" @ col(KFIRC(Owner).Default.Color1) $ "Kills/Deaths:" @ col(KFIRC(Owner).Default.Color2) $ PRI.kills $ col(KFIRC(Owner).Default.Color1) $ "/" $ col(KFIRC(Owner).Default.Color2) $ int(PRI.Deaths) @ col(KFIRC(Owner).Default.Color1) $ "Money:" @ col(KFIRC(Owner).Default.Color2) $ int(PRI.score) @ col(KFIRC(Owner).Default.Color1) $ "PING:" @ col(KFIRC(Owner).Default.Color2) $ PRI.Ping);
+	for (C=Level.ControllerList; C!=None; C=C.NextController) {
+		if (KFPlayerController(C) != None) {
+			PRI = PlayerController(C).PlayerReplicationInfo;
+			if (C.Pawn != None) {
+				health = C.Pawn.Health;
+				armor = C.Pawn.ShieldStrength;
+			} else {
+				health = 0;
+				armor = 0;
+			}
+			ircSend(col(KFIRC(Owner).Default.Color1) $ "Player:" @ col(KFIRC(Owner).Default.Color2) $ PRI.PlayerName @
+					col(KFIRC(Owner).Default.Color1) $ "(" $ col(KFIRC(Owner).Default.Color2) $ col(KFIRC(Owner).Default.Color2) $ getPerkName(string(KFPlayerReplicationInfo(PRI).ClientVeteranSkill)) @ col(KFIRC(Owner).Default.Color1) $ "Level:" @ col(KFIRC(Owner).Default.Color2) $ KFPlayerReplicationInfo(PRI).ClientVeteranSkillLevel $ col(KFIRC(Owner).Default.Color1) $ ")" @
+					col(KFIRC(Owner).Default.Color1) $ "Kills/Deaths:" @ col(KFIRC(Owner).Default.Color2) $ PRI.kills $ col(KFIRC(Owner).Default.Color1) $ "/" $ col(KFIRC(Owner).Default.Color2) $ int(PRI.Deaths) @
+					col(KFIRC(Owner).Default.Color1) $ "Money:" @ col(KFIRC(Owner).Default.Color2) $ int(PRI.score) @
+					col(KFIRC(Owner).Default.Color1) $ "Health/Armor:" @ col(KFIRC(Owner).Default.Color2) $ string(health) $ col(KFIRC(Owner).Default.Color1) $ "/" $ col(KFIRC(Owner).Default.Color2) $ string(armor) @
+					col(KFIRC(Owner).Default.Color1) $ "PING:" @ col(KFIRC(Owner).Default.Color2) $ Min(999,4 * PRI.Ping));
 		}
-		++i;
 	}
 }
 

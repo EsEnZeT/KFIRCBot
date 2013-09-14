@@ -166,7 +166,7 @@ function ProcessLine(string msg) {
 		Split(users[1], " ", users);	
 	}	
 
-	if (Data[1] == "433") {
+	if (Data[1] == "433" || Data[1] == "437") {
 		SendText("NICK" @ KFIRC(Owner).Default.ircNick $ "-" $ Rand(1000) $ Chr(10));
 		stats = 1;
 	}
